@@ -1,0 +1,59 @@
+Temp/
+Temp/
+Obj/
+UnityGenerated/
+Library/
+UnityVS/
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+ 
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+UpgradeLog*
+*.htm
+*.csproj
+Assembly-CSharp.csproj
+*.dwlt
+Library/CurrentLayout.dwlt
+Assembly-CSharp.csproj
+Library/CurrentLayout.dwlt
+*.csproj
+UnityVS.*
+Assets/UnityVS/Editor/*.dll
+Library/CurrentLayout.dwlt
+Assets/UnityVS/*
+ProjectSettings/UnityAdsSettings.asset
+*.orig
+*.orig.meta
+\.vs/v15/sqlite3/storage\.ide
+
+\.vscode/
+
+/Exectuable/
+/Executable/
+/.vs/
+/Logs/IncrementalCompiler
+unity_incremental_compiler_server.log
+/Assets/EntityCache/Resources.meta
+/executable.zip

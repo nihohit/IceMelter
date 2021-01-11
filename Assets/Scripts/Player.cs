@@ -32,23 +32,9 @@ public class Player : MonoBehaviour {
         Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
     velocity.z =
         Mathf.MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
+    transform.rotation = Quaternion.LookRotation(velocity);
 
-    // if (newPosition.x < allowedArea.xMin) {
-    //     newPosition.x = allowedArea.xMin;
-    //     velocity.x = -velocity.x * bounciness;
-    // }
-    // else if (newPosition.x > allowedArea.xMax) {
-    //     newPosition.x = allowedArea.xMax;
-    //     velocity.x = -velocity.x * bounciness;
-    // }
-    // if (newPosition.z < allowedArea.yMin) {
-    //     newPosition.z = allowedArea.yMin;
-    //     velocity.z = -velocity.z * bounciness;
-    // }
-    // else if (newPosition.z > allowedArea.yMax) {
-    //     newPosition.z = allowedArea.yMax;
-    //     velocity.z = -velocity.z * bounciness;
-    // }
+    // TODO - find and melt the tile below. lift according to the tile's state.
   }
 
   // Update is called once per frame

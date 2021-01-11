@@ -1,8 +1,11 @@
 fileFormatVersion: 2
-guid: 0e281126f5f2046ccb0c47e1dcc6f334
+guid: f422cf91fa0184323841eb774937905c
 ModelImporter:
   serializedVersion: 20101
-  internalIDToNameTable: []
+  internalIDToNameTable:
+  - first:
+      74: -1498010087492872569
+    second: CINEMA_4D_Main
   externalObjects: {}
   materials:
     materialImportMode: 1

@@ -32,8 +32,9 @@ public class Player : MonoBehaviour {
         Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
     velocity.z =
         Mathf.MoveTowards(velocity.z, desiredVelocity.z, maxSpeedChange);
-    transform.rotation = Quaternion.LookRotation(velocity);
-
+    if (!velocity.Equals(Vector3.zero)) {
+      transform.rotation = Quaternion.LookRotation(velocity);
+    }
     // TODO - find and melt the tile below. lift according to the tile's state.
   }
 

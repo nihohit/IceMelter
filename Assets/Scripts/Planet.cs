@@ -5,11 +5,14 @@ using UnityEngine.InputSystem;
 
 public class Planet : MonoBehaviour {
 
-  [SerializeField, Range(0f, 100f)]
-  float maxSpeed = 10f;
+  [SerializeField, Range(0f, 10f)]
+  float maxVerticalSpeed = 5;
 
-  [SerializeField, Range(0f, 100f)]
-  float maxAcceleration = 10f;
+  [SerializeField, Range(0f, 10f)]
+  float maxHorizontalSpeed = 5f;
+
+  [SerializeField, Range(0f, 10f)]
+  float maxAcceleration = 5f;
 
   [SerializeField, Range(0f, 1f)]
   float bounciness = 0.5f;
@@ -18,6 +21,7 @@ public class Planet : MonoBehaviour {
   public const float kRadius = 8;
   public const float kSpaceshipHeight = 5 + kRadius;
   public const float kBearInitialHeight = 1 + kRadius;
+  public const float kCameraDistance = 20;
   public GameObject spaceship;
   public GameObject player;
 
@@ -25,7 +29,7 @@ public class Planet : MonoBehaviour {
     return (new Vector3(Mathf.Sin(theta) * Mathf.Cos(phi), Mathf.Sin(theta) * Mathf.Sin(phi), Mathf.Cos(theta)) * radius) + transform.position;
   }
 
-  private void adjustPosition(GameObject gameObject, float phi, float theta, float radius) {
+  private void adjustPositionAndFacePlanet(GameObject gameObject, float phi, float theta, float radius) {
     Vector3 position = positionVectorForAngle(phi, theta, radius);
     Quaternion rotation = Quaternion.LookRotation(position - transform.position) * kTopRotation;
     gameObject.transform.position = position;
@@ -52,13 +56,13 @@ public class Planet : MonoBehaviour {
         var phi = 2 * Mathf.PI * n / M_phi;
         var tile = Instantiate(tilePrefab);
         tile.transform.parent = transform;
-        adjustPosition(tile, phi, theta, kRadius);
+        adjustPositionAndFacePlanet(tile, phi, theta, kRadius);
         ++Ncount;
       }
     }
 
     spaceship.transform.position = positionVectorForAngle(0, 0, kSpaceshipHeight);
-    adjustPosition(player, 0, 0, kBearInitialHeight);
+    adjustPositionAndFacePlanet(player, 0, 0, kBearInitialHeight);
   }
 
   // Update is called once per frame
@@ -70,16 +74,29 @@ public class Planet : MonoBehaviour {
 
   private Vector2 direction;
   private Vector2 velocity;
-  private Vector2 angles = Vector2.zero;
 
   private void adjustPlayerPosition() {
-    Vector3 desiredVelocity = new Vector3(direction.x, 0f, direction.y) * maxSpeed;
+    Vector3 desiredVelocity = new Vector2(direction.x * maxHorizontalSpeed, direction.y * maxVerticalSpeed);
 
     float maxSpeedChange = maxAcceleration * Time.deltaTime;
     velocity.x = Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
-    velocity.y = Mathf.MoveTowards(velocity.y, desiredVelocity.z, maxSpeedChange);
-    angles = angles + velocity;
-    adjustPosition(player, angles.x, angles.y, kBearInitialHeight);
+    velocity.y = Mathf.MoveTowards(velocity.y, desiredVelocity.y, maxSpeedChange);
+    var lastPosition = player.transform.position;
+    var verticalChange = Vector3.up * velocity.y;
+    var offset = lastPosition - transform.position;
+    offset.y = 0;
+    var horizontalChange = Vector3.Normalize(Vector3.Cross(offset, Vector3.up)) * velocity.x;
+    horizontalChange.y = 0;
+    var unnormalizedPosition = lastPosition + verticalChange + horizontalChange;
+    var currentPosition = Vector3.Normalize(unnormalizedPosition - transform.position) * kRadius;
+    player.transform.position = currentPosition;
+    if (currentPosition != lastPosition) {
+      player.transform.rotation = Quaternion.LookRotation(currentPosition - transform.position) * kTopRotation;
+    }
+    var cameraPosition = currentPosition - transform.position;
+    cameraPosition.y = transform.position.y;
+    Camera.main.transform.position = Vector3.Normalize(cameraPosition) * kCameraDistance;
+    Camera.main.transform.LookAt(cameraPosition);
     // if (!velocity.Equals(Vector3.zero)) {
     //   transform.rotation = Quaternion.LookRotation(velocity);
     // }
@@ -92,7 +109,7 @@ public class Planet : MonoBehaviour {
 
   private void adjustSpaceshipPosition() {
     spaceshipTheta -= kSpaceshipSpeed * Time.deltaTime; //if you want to switch direction, use -= instead of +=
-    adjustPosition(spaceship, spaceshipPhi, spaceshipTheta, kSpaceshipHeight);
+    adjustPositionAndFacePlanet(spaceship, spaceshipPhi, spaceshipTheta, kSpaceshipHeight);
   }
 
   // Update is called once per frame

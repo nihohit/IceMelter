@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Tile : MonoBehaviour {
-  float currentMelting = 100f;
-  const float kIceMelt = 60;
-  const float kWaterMelt = 20;
+  float currentMelting = 8f;
+  const float kIceMelt = 6;
+  const float kWaterMelt = 1;
   public GameObject ice;
   public GameObject water;
   public GameObject lava;

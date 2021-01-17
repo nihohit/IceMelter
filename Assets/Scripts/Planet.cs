@@ -20,7 +20,7 @@ public class Planet : MonoBehaviour {
   private static readonly Quaternion kTopRotation = Quaternion.Euler(90, 0, 0);
   public const float kRadius = 8;
   public const float kSpaceshipHeight = 5 + kRadius;
-  public const float kBearInitialHeight = 1 + kRadius;
+  public const float kBearInitialHeight = 0.5f + kRadius;
   public const float kCameraDistance = 20;
   public GameObject spaceship;
   public GameObject player;
@@ -69,7 +69,18 @@ public class Planet : MonoBehaviour {
   void Update() {
     adjustSpaceshipPosition();
     adjustPlayerPosition();
-    // TODO - find and melt the tile below. lift according to the tile's state.
+    meltTile();
+  }
+
+  private RaycastHit hit;
+
+  private void meltTile() {
+    var ray = new Ray(transform.position, player.transform.position);
+    Physics.Raycast(ray, out hit);
+    if (hit.collider) {
+      var tile = hit.collider.GetComponent<Tile>();
+      tile.SetMeltingState((1.5f - Vector3.Distance(player.transform.position, hit.point)) * Time.deltaTime);
+    }
   }
 
   private Vector2 direction;
@@ -97,9 +108,6 @@ public class Planet : MonoBehaviour {
     cameraPosition.y = transform.position.y;
     Camera.main.transform.position = Vector3.Normalize(cameraPosition) * kCameraDistance;
     Camera.main.transform.LookAt(cameraPosition);
-    // if (!velocity.Equals(Vector3.zero)) {
-    //   transform.rotation = Quaternion.LookRotation(velocity);
-    // }
   }
 
   private float spaceshipPhi = 0;

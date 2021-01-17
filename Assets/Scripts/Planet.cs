@@ -19,7 +19,8 @@ public class Planet : MonoBehaviour {
 
   private static readonly Quaternion kTopRotation = Quaternion.Euler(90, 0, 0);
   public const float kRadius = 8;
-  public const float kSpaceshipHeight = 5 + kRadius;
+  public const float kSpaceshipHeightFromSurface = 5;
+  public const float kSpaceshipHeight = kSpaceshipHeightFromSurface + kRadius;
   public const float kBearInitialHeight = 0.5f + kRadius;
   public const float kCameraDistance = 20;
   public GameObject spaceship;
@@ -65,8 +66,16 @@ public class Planet : MonoBehaviour {
     adjustPositionAndFacePlanet(player, 0, 0, kBearInitialHeight);
   }
 
+  bool firstUpdate = true;
+
   // Update is called once per frame
   void Update() {
+    if (firstUpdate) {
+      firstUpdate = false;
+      foreach (var tile in GetComponentsInChildren<Tile>()) {
+        tile.PopulateNeighbours();
+      }
+    }
     adjustSpaceshipPosition();
     adjustPlayerPosition();
     meltTile();
@@ -79,7 +88,7 @@ public class Planet : MonoBehaviour {
     Physics.Raycast(ray, out hit);
     if (hit.collider) {
       var tile = hit.collider.GetComponent<Tile>();
-      tile.SetMeltingState((1.5f - Vector3.Distance(player.transform.position, hit.point)) * Time.deltaTime);
+      tile.SetMeltingState(1.5f - Vector3.Distance(player.transform.position, hit.point));
     }
   }
 

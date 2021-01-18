@@ -27,11 +27,19 @@ public class Tile : MonoBehaviour {
   float heatReceived = 0f;
   bool needsUpdate = true;
 
+  private float heatUpdate() {
+    var accumulator = currentUpdateHeat;
+    foreach (var tile in neighbours) {
+      accumulator += tile.HeatReleased();
+    }
+    return accumulator;
+  }
+
   private void Update() {
     if (!needsUpdate) {
       return;
     }
-    heatReceived = (currentUpdateHeat + neighbours.Aggregate(0f, (acc, tile) => acc + tile.HeatReleased())) * Time.deltaTime;
+    heatReceived = heatUpdate() * Time.deltaTime;
     currentUpdateHeat = 0f;
     currentMelting -= heatReceived;
     if (currentMelting < kIceMelt && ice.activeSelf) {

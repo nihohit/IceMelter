@@ -32,7 +32,7 @@ public class Planet : MonoBehaviour {
 
   private void adjustPositionAndFacePlanet(GameObject gameObject, float phi, float theta, float radius) {
     Vector3 position = positionVectorForAngle(phi, theta, radius);
-    Quaternion rotation = Quaternion.LookRotation(position - transform.position) * kTopRotation;
+    Quaternion rotation = Quaternion.LookRotation(gameObject.transform.position - position, position - transform.position);
     gameObject.transform.position = position;
     gameObject.transform.rotation = rotation;
   }
@@ -127,8 +127,14 @@ public class Planet : MonoBehaviour {
   private float spaceshipTheta = 0;
   private const float kTimeToCircle = 10;
   private const float kSpaceshipSpeed = (2 * Mathf.PI) / kTimeToCircle; //2*PI in degress is 360, so you get 5 seconds to complete a circle
+  private float targetSpaceshipPhi = 0;
 
   private void adjustSpaceshipPosition() {
+    if (Mathf.Approximately(spaceshipPhi, targetSpaceshipPhi)) {
+      targetSpaceshipPhi += Random.Range(-10.0f, 10.0f);
+      targetSpaceshipPhi = Mathf.Clamp(targetSpaceshipPhi, 0, 180);
+    }
+    spaceshipPhi = Mathf.Lerp(spaceshipPhi, targetSpaceshipPhi, Time.deltaTime);
     spaceshipTheta -= kSpaceshipSpeed * Time.deltaTime; //if you want to switch direction, use -= instead of +=
     adjustPositionAndFacePlanet(spaceship, spaceshipPhi, spaceshipTheta, kSpaceshipHeight);
   }

@@ -44,10 +44,8 @@ public class Tile : MonoBehaviour {
     heatReceived = heatUpdate() * Time.deltaTime;
     currentUpdateHeat = 0f;
     currentMelting -= heatReceived;
-    if (cloudParticles.isPlaying) {
-      var emission = cloudParticles.emission;
-      emission.rateOverTime = VaporReleased() / Time.deltaTime;
-    }
+    var emission = cloudParticles.emission;
+    emission.rateOverTime = VaporReleased() / Time.deltaTime;
 
 
     if (currentMelting < kIceMelt && ice.activeSelf) {
@@ -80,7 +78,7 @@ public class Tile : MonoBehaviour {
       return 0;
     }
     if (currentMelting > kIceMelt) {
-      return heatReceived / 2;
+      return heatReceived / 4;
     }
     return heatReceived;
   }

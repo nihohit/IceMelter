@@ -11,11 +11,14 @@ public class Tile : MonoBehaviour {
   public GameObject water;
   public GameObject lava;
   public List<Tile> neighbours;
+  private ParticleSystem cloudParticles;
 
   void Start() {
     ice.SetActive(true);
     water.SetActive(false);
     lava.SetActive(false);
+    cloudParticles = GetComponent<ParticleSystem>();
+    cloudParticles.Play();
   }
 
   public void PopulateNeighbours() {
@@ -25,7 +28,6 @@ public class Tile : MonoBehaviour {
 
   float currentUpdateHeat = 0f;
   float heatReceived = 0f;
-  bool needsUpdate = true;
 
   private float heatUpdate() {
     var accumulator = currentUpdateHeat;
@@ -36,20 +38,26 @@ public class Tile : MonoBehaviour {
   }
 
   private void Update() {
-    if (!needsUpdate) {
+    if (currentMelting < kWaterMelt) {
       return;
     }
     heatReceived = heatUpdate() * Time.deltaTime;
     currentUpdateHeat = 0f;
     currentMelting -= heatReceived;
+    if (cloudParticles.isPlaying) {
+      var emission = cloudParticles.emission;
+      emission.rateOverTime = VaporReleased() / Time.deltaTime;
+    }
+
+
     if (currentMelting < kIceMelt && ice.activeSelf) {
       ice.SetActive(false);
       water.SetActive(true);
     }
     if (currentMelting < kWaterMelt && water.activeSelf) {
+      cloudParticles.Stop();
       water.SetActive(false);
       lava.SetActive(true);
-      needsUpdate = false;
     }
   }
 

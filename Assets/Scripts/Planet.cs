@@ -77,8 +77,8 @@ public class Planet : MonoBehaviour {
       }
     }
     adjustSpaceshipPosition();
-    adjustPlayerPosition();
     meltTile();
+    adjustPlayerPosition();
   }
 
   private RaycastHit hit;
@@ -108,7 +108,11 @@ public class Planet : MonoBehaviour {
     var horizontalChange = Vector3.Normalize(Vector3.Cross(offset, Vector3.up)) * velocity.x;
     horizontalChange.y = 0;
     var unnormalizedPosition = lastPosition + verticalChange + horizontalChange;
-    var currentPosition = Vector3.Normalize(unnormalizedPosition - transform.position) * kRadius;
+    var lastHeight = Vector3.Distance(lastPosition, transform.position);
+    var vapor = hit.collider != null ? hit.collider.GetComponent<Tile>().VaporReleased() : 0;
+    var heightDifference = vapor > 0 ? vapor : -3 * Time.deltaTime;
+    var height = Mathf.Max(lastHeight + heightDifference, kRadius);
+    var currentPosition = Vector3.Normalize(unnormalizedPosition - transform.position) * height;
     player.transform.position = currentPosition;
     if (currentPosition != lastPosition) {
       player.transform.rotation = Quaternion.LookRotation(currentPosition - transform.position) * kTopRotation;

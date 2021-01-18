@@ -814,8 +814,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1efed7abe9b34a5479475235f2e0a774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 0.1
-  maxAcceleration: 0.1
+  maxVerticalSpeed: 1.5
+  maxHorizontalSpeed: 0.2
+  maxAcceleration: 0.16
   bounciness: 0.5
   spaceship: {fileID: 1627644796}
   player: {fileID: 1955299743}

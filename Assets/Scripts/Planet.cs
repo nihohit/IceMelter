@@ -25,6 +25,7 @@ public class Planet : MonoBehaviour {
   public const float kCameraDistance = 20;
   public GameObject spaceship;
   public GameObject player;
+  private Material starfield;
 
   private Vector3 positionVectorForAngle(float phi, float theta, float radius) {
     return (new Vector3(Mathf.Sin(theta) * Mathf.Cos(phi), Mathf.Sin(theta) * Mathf.Sin(phi), Mathf.Cos(theta)) * radius) + transform.position;
@@ -38,6 +39,7 @@ public class Planet : MonoBehaviour {
   }
 
   void Awake() {
+    starfield = Camera.main.transform.Find("Starfield").GetComponent<MeshRenderer>().material;
     var tilePrefab = Resources.Load<GameObject>("Tile");
     float surfaceArea = 4 * Mathf.PI * Mathf.Pow(kRadius, 2);
     float tileRadius = tilePrefab.GetComponent<CapsuleCollider>().radius;
@@ -79,6 +81,7 @@ public class Planet : MonoBehaviour {
     adjustSpaceshipPosition();
     meltTile();
     adjustPlayerPosition();
+    starfield.mainTextureOffset = starfield.mainTextureOffset + new Vector2(velocity.x, 0) * Time.deltaTime;
   }
 
   private RaycastHit hit;

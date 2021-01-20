@@ -66,6 +66,8 @@ public class Planet : MonoBehaviour {
 
     spaceship.transform.position = positionVectorForAngle(0, 0, kSpaceshipHeight);
     adjustPositionAndFacePlanet(player, 0, 0, kBearInitialHeight);
+    adjustPositionAndFacePlanet(Camera.main.gameObject, 0, 0, kCameraDistance);
+    Camera.main.transform.LookAt(transform.position);
   }
 
   bool firstUpdate = true;
@@ -81,7 +83,7 @@ public class Planet : MonoBehaviour {
     adjustSpaceshipPosition();
     meltTile();
     adjustPlayerPosition();
-    starfield.mainTextureOffset = starfield.mainTextureOffset + new Vector2(velocity.x, 0) * Time.deltaTime;
+    adjustCameraAndStarfield();
   }
 
   private RaycastHit hit;
@@ -120,10 +122,25 @@ public class Planet : MonoBehaviour {
     if (currentPosition != lastPosition) {
       player.transform.rotation = Quaternion.LookRotation(currentPosition - transform.position) * kTopRotation;
     }
-    var cameraPosition = currentPosition - transform.position;
-    cameraPosition.y = transform.position.y;
-    Camera.main.transform.position = Vector3.Normalize(cameraPosition) * kCameraDistance;
-    Camera.main.transform.LookAt(cameraPosition);
+
+  }
+
+  private void adjustCameraAndStarfield() {
+    var vectorToPlanet = Camera.main.transform.position - transform.position;
+    var angle = Vector3.SignedAngle(player.transform.position, vectorToPlanet, Vector3.up);
+    const float kTargetAngle = 15;
+    if (Mathf.Abs(angle) > kTargetAngle) {
+      var horizontalChange =
+        Vector3.Normalize(Vector3.Cross(vectorToPlanet, Vector3.up)) *
+        Vector2.Distance(velocity, Vector2.zero) *
+        Mathf.Sign(angle) *
+        kCameraDistance /
+        Vector3.Distance(player.transform.position, transform.position);
+      horizontalChange.y = 0;
+      Camera.main.transform.position = Vector3.Normalize(Camera.main.transform.position + horizontalChange - transform.position) * kCameraDistance;
+      Camera.main.transform.LookAt(transform.position);
+      starfield.mainTextureOffset += new Vector2(velocity.x, 0) * Time.deltaTime;
+    }
   }
 
   private float spaceshipPhi = 0;

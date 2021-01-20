@@ -679,10 +679,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: 4ca6c9c4-50a3-4719-82e0-9a0037e4f11a
   framebufferDepthMemorylessMode: 0
-  projectName: 
-  organizationId: 
+  projectName: IceMelter
+  organizationId: nihohit1
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 1
   disableOldInputManagerSupport: 1

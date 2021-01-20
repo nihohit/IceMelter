@@ -31,11 +31,10 @@ public class Planet : MonoBehaviour {
     return (new Vector3(Mathf.Sin(theta) * Mathf.Cos(phi), Mathf.Sin(theta) * Mathf.Sin(phi), Mathf.Cos(theta)) * radius) + transform.position;
   }
 
-  private void adjustPositionAndFacePlanet(GameObject gameObject, float phi, float theta, float radius) {
+  private void adjustPositionAndFacePlanet(GameObject obj, float phi, float theta, float radius) {
     Vector3 position = positionVectorForAngle(phi, theta, radius);
-    Quaternion rotation = Quaternion.LookRotation(gameObject.transform.position - position, position - transform.position);
-    gameObject.transform.position = position;
-    gameObject.transform.rotation = rotation;
+    obj.transform.position = position;
+    obj.transform.rotation = Quaternion.LookRotation(position - transform.position) * kTopRotation;
   }
 
   void Awake() {
@@ -64,7 +63,7 @@ public class Planet : MonoBehaviour {
       }
     }
 
-    spaceship.transform.position = positionVectorForAngle(0, 0, kSpaceshipHeight);
+    adjustPositionAndFacePlanet(spaceship, 0, 0, kSpaceshipHeight);
     adjustPositionAndFacePlanet(player, 0, 0, kBearInitialHeight);
   }
 
@@ -139,7 +138,9 @@ public class Planet : MonoBehaviour {
     }
     spaceshipPhi = Mathf.Lerp(spaceshipPhi, targetSpaceshipPhi, Time.deltaTime);
     spaceshipTheta -= kSpaceshipSpeed * Time.deltaTime; //if you want to switch direction, use -= instead of +=
-    adjustPositionAndFacePlanet(spaceship, spaceshipPhi, spaceshipTheta, kSpaceshipHeight);
+    Vector3 lastPosition = gameObject.transform.position;
+    spaceship.transform.position = positionVectorForAngle(spaceshipPhi, spaceshipTheta, kSpaceshipHeight);
+    spaceship.transform.rotation = Quaternion.LookRotation(lastPosition - spaceship.transform.position, spaceship.transform.position - transform.position);
   }
 
   // Update is called once per frame

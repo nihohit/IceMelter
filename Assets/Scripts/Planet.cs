@@ -96,6 +96,14 @@ public class Planet : MonoBehaviour {
 
   private Vector2 direction;
   private Vector2 velocity;
+  private Quaternion rotationAroundGlobe = Quaternion.identity;
+
+  private float getUpdatedHeight() {
+    var lastHeight = Vector3.Distance(player.transform.position, transform.position);
+    var vapor = hit.collider != null ? hit.collider.GetComponent<Tile>().VaporReleased() : 0;
+    var heightDifference = vapor > 0 ? vapor : -3 * Time.deltaTime;
+    return Mathf.Max(lastHeight + heightDifference, kRadius);
+  }
 
   private void adjustPlayerPosition() {
     Vector3 desiredVelocity = new Vector2(direction.x * maxHorizontalSpeed, direction.y * maxVerticalSpeed);
@@ -103,18 +111,14 @@ public class Planet : MonoBehaviour {
     float maxSpeedChange = maxAcceleration * Time.deltaTime;
     velocity.x = Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
     velocity.y = Mathf.MoveTowards(velocity.y, desiredVelocity.y, maxSpeedChange);
+
     var lastPosition = player.transform.position;
-    var verticalChange = Vector3.up * velocity.y;
-    var offset = lastPosition - transform.position;
-    offset.y = 0;
-    var horizontalChange = Vector3.Normalize(Vector3.Cross(offset, Vector3.up)) * velocity.x;
-    horizontalChange.y = 0;
-    var unnormalizedPosition = lastPosition + verticalChange + horizontalChange;
-    var lastHeight = Vector3.Distance(lastPosition, transform.position);
-    var vapor = hit.collider != null ? hit.collider.GetComponent<Tile>().VaporReleased() : 0;
-    var heightDifference = vapor > 0 ? vapor : -3 * Time.deltaTime;
-    var height = Mathf.Max(lastHeight + heightDifference, kRadius);
-    var currentPosition = Vector3.Normalize(unnormalizedPosition - transform.position) * height;
+    float newHeight = getUpdatedHeight();
+    rotationAroundGlobe *= Quaternion.Euler(0, velocity.x, 0);
+
+
+
+    var currentPosition = rotationAroundGlobe * Vector3.forward * newHeight;
     player.transform.position = currentPosition;
     if (currentPosition != lastPosition) {
       player.transform.rotation = Quaternion.LookRotation(currentPosition - transform.position) * kTopRotation;

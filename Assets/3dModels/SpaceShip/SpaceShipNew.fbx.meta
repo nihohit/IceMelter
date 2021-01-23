@@ -3,7 +3,22 @@ guid: 51e4a7137c28b4af2a8c4619285e6df6
 ModelImporter:
   serializedVersion: 20101
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mat.1
+    second: {fileID: 2100000, guid: e44df0bad44f14f1e9c79f714605f429, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WaterTexture
+    second: {fileID: 2100000, guid: 06bf7530dfa024753ab849c7b9a72fda, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: spaceship
+    second: {fileID: 2100000, guid: bf6b8a013f1a24248a0fe33f965d5c12, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

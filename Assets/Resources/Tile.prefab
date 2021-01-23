@@ -53,6 +53,8 @@ MonoBehaviour:
   water: {fileID: 5995526828122126367}
   lava: {fileID: 8009566302971724250}
   neighbours: []
+  textPrefab: {fileID: 4870025947281901161, guid: e5e2310c08f768949849a11ead9e2250, type: 3}
+  canvas: {fileID: 0}
 --- !u!136 &356687346011606845
 CapsuleCollider:
   m_ObjectHideFlags: 0

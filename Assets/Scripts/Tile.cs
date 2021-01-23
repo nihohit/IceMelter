@@ -12,6 +12,8 @@ public class Tile : MonoBehaviour {
   public GameObject lava;
   public List<Tile> neighbours;
   private ParticleSystem cloudParticles;
+  public GameObject textPrefab;
+  private TMPro.TMP_Text label;
 
   void Start() {
     ice.SetActive(true);
@@ -19,6 +21,9 @@ public class Tile : MonoBehaviour {
     lava.SetActive(false);
     cloudParticles = GetComponent<ParticleSystem>();
     cloudParticles.Play();
+    var canvas = FindObjectOfType<Canvas>();
+    label = Instantiate(textPrefab).GetComponent<TMPro.TMP_Text>();
+    label.rectTransform.SetParent(canvas.transform, false);
   }
 
   public void PopulateNeighbours() {
@@ -38,14 +43,21 @@ public class Tile : MonoBehaviour {
   }
 
   private void Update() {
+    label.gameObject.SetActive(Debug.isDebugBuild && currentUpdateHeat > 0);
     if (currentMelting < kWaterMelt) {
       return;
     }
     heatReceived = heatUpdate() * Time.deltaTime;
     currentUpdateHeat = 0f;
     currentMelting -= heatReceived;
+
     var emission = cloudParticles.emission;
     emission.rateOverTime = VaporReleased() / Time.deltaTime;
+
+    if (Debug.isDebugBuild) {
+      label.text = $"{heatReceived:0.##}/{HeatReleased():0.##}/{VaporReleased():0.##}";
+      label.transform.position = Camera.main.WorldToScreenPoint(transform.position);
+    }
 
 
     if (currentMelting < kIceMelt && ice.activeSelf) {

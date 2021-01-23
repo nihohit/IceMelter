@@ -76,13 +76,7 @@ public class Tile : MonoBehaviour {
   }
 
   public float HeatReleased() {
-    if (currentMelting > kIceMelt) {
-      return 0;
-    }
-    if (currentMelting < kWaterMelt) {
-      return 0.25f;
-    }
-    return (kIceMelt - currentMelting) / 20;
+    return Mathf.Clamp((kIceMelt - currentMelting) / 5, 0, 1);
   }
 
   public float VaporReleased() {
@@ -93,5 +87,13 @@ public class Tile : MonoBehaviour {
       return heatReceived / 4;
     }
     return heatReceived;
+  }
+
+  public float VaporWithNeighbours() {
+    var accumulator = VaporReleased();
+    foreach (var tile in neighbours) {
+      accumulator += tile.VaporReleased();
+    }
+    return accumulator;
   }
 }

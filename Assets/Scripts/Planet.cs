@@ -112,9 +112,8 @@ public class Planet : MonoBehaviour {
     var unnormalizedPosition = lastPosition + verticalChange + horizontalChange;
     var lastHeight = Vector3.Distance(lastPosition, transform.position);
     var vapor = hit.collider != null ? hit.collider.GetComponent<Tile>().VaporWithNeighbours() : 0;
-    Debug.Log($"{vapor:0.###}, {Time.deltaTime}");
     var heightDifference = vapor - Time.deltaTime;
-    var height = lastHeight + Mathf.Clamp(heightDifference, -Time.deltaTime, Time.deltaTime);
+    var height = Mathf.Max(lastHeight + Mathf.Clamp(heightDifference, -Time.deltaTime, Time.deltaTime), kRadius);
     var currentPosition = Vector3.Normalize(unnormalizedPosition - transform.position) * height;
     player.transform.position = currentPosition;
     if (currentPosition != lastPosition) {

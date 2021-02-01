@@ -96,4 +96,8 @@ public class Tile : MonoBehaviour {
     }
     return accumulator;
   }
+
+  public bool isLava() {
+    return currentMelting < kWaterMelt;
+  }
 }

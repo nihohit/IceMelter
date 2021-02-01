@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class Planet : MonoBehaviour {
 
@@ -26,6 +27,10 @@ public class Planet : MonoBehaviour {
   public GameObject spaceship;
   public GameObject player;
   private Material starfield;
+  public GameObject winScreen;
+  public GameObject loseScreen;
+  public GameObject newGameButton;
+  private bool gameOn = true;
 
   private Vector3 positionVectorForAngle(float phi, float theta, float radius) {
     return (new Vector3(Mathf.Sin(theta) * Mathf.Cos(phi), Mathf.Sin(theta) * Mathf.Sin(phi), Mathf.Cos(theta)) * radius) + transform.position;
@@ -38,6 +43,9 @@ public class Planet : MonoBehaviour {
   }
 
   void Awake() {
+    winScreen.SetActive(false);
+    loseScreen.SetActive(false);
+    newGameButton.SetActive(false);
     starfield = Camera.main.transform.Find("Starfield").GetComponent<MeshRenderer>().material;
     var tilePrefab = Resources.Load<GameObject>("Tile");
     float surfaceArea = 4 * Mathf.PI * Mathf.Pow(kRadius, 2);
@@ -71,6 +79,9 @@ public class Planet : MonoBehaviour {
 
   // Update is called once per frame
   void Update() {
+    if (!gameOn) {
+      return;
+    }
     if (firstUpdate) {
       firstUpdate = false;
       foreach (var tile in GetComponentsInChildren<Tile>()) {
@@ -81,6 +92,12 @@ public class Planet : MonoBehaviour {
     meltTile();
     adjustPlayerPosition();
     starfield.mainTextureOffset = starfield.mainTextureOffset + new Vector2(velocity.x, 0) * Time.deltaTime;
+    if (hit.collider && hit.collider.GetComponent<Tile>().isLava()) {
+      endGame(loseScreen);
+    }
+    if (Vector3.Distance(player.transform.position, spaceship.transform.position) < 1) {
+      endGame(winScreen);
+    }
   }
 
   private RaycastHit hit;
@@ -146,5 +163,15 @@ public class Planet : MonoBehaviour {
   // Update is called once per frame
   public void OnMove(InputValue input) {
     direction = input.Get<Vector2>();
+  }
+
+  private void endGame(GameObject screen) {
+    gameOn = false;
+    screen.SetActive(true);
+    newGameButton.SetActive(true);
+  }
+
+  public void StartNewGame() {
+    SceneManager.LoadScene("SampleScene");
   }
 }

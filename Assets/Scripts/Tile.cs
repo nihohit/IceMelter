@@ -14,6 +14,7 @@ public class Tile : MonoBehaviour {
   private ParticleSystem cloudParticles;
   public GameObject textPrefab;
   private TMPro.TMP_Text label;
+  public bool stopped = false;
 
   void Start() {
     ice.SetActive(true);
@@ -43,6 +44,9 @@ public class Tile : MonoBehaviour {
   }
 
   private void Update() {
+    if (stopped) {
+      return;
+    }
     label.gameObject.SetActive(Debug.isDebugBuild && currentUpdateHeat > 0);
     if (currentMelting < kWaterMelt) {
       return;

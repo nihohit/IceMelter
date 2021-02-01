@@ -30,6 +30,8 @@ public class Planet : MonoBehaviour {
   public GameObject winScreen;
   public GameObject loseScreen;
   public GameObject newGameButton;
+  public AudioClip spaceshipFade;
+  public AudioClip planetFade;
   private bool gameOn = true;
 
   private Vector3 positionVectorForAngle(float phi, float theta, float radius) {
@@ -91,8 +93,8 @@ public class Planet : MonoBehaviour {
     adjustSpaceshipPosition();
     meltTile();
     adjustPlayerPosition();
-    starfield.mainTextureOffset = starfield.mainTextureOffset + new Vector2(velocity.x, 0) * Time.deltaTime;
-    if (hit.collider && hit.collider.GetComponent<Tile>().isLava()) {
+    starfield.mainTextureOffset += new Vector2(velocity.x, 0) * Time.deltaTime;
+    if (hit.collider && hit.collider.GetComponent<Tile>().isLava() && Vector3.Distance(player.transform.position, hit.transform.position) < 1) {
       endGame(loseScreen);
     }
     if (Vector3.Distance(player.transform.position, spaceship.transform.position) < 1) {
@@ -166,6 +168,19 @@ public class Planet : MonoBehaviour {
   }
 
   private void endGame(GameObject screen) {
+    foreach (var tile in FindObjectsOfType<Tile>()) {
+      tile.stopped = true;
+      foreach (var audioSource in tile.GetComponentsInChildren<AudioSource>()) {
+        audioSource.Stop();
+      }
+    }
+
+    var planetAudioSource = GetComponent<AudioSource>();
+    planetAudioSource.clip = planetFade;
+    planetAudioSource.loop = false;
+    var spaceshipAudioSource = spaceship.GetComponent<AudioSource>();
+    spaceshipAudioSource.clip = spaceshipFade;
+    spaceshipAudioSource.loop = false;
     gameOn = false;
     screen.SetActive(true);
     newGameButton.SetActive(true);

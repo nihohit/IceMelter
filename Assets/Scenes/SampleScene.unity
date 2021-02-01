@@ -6208,6 +6208,8 @@ MonoBehaviour:
   winScreen: {fileID: 1440984012}
   loseScreen: {fileID: 1573036281}
   newGameButton: {fileID: 592385178}
+  spaceshipFade: {fileID: 8300000, guid: 63349ccd9143e4c49bd82e46d8cfd187, type: 3}
+  planetFade: {fileID: 8300000, guid: ccfcc00fc9750ea408d009208f92bc6f, type: 3}
 --- !u!4 &1947452413
 Transform:
   m_ObjectHideFlags: 0

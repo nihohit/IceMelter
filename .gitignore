@@ -57,3 +57,4 @@ ProjectSettings/UnityAdsSettings.asset
 unity_incremental_compiler_server.log
 /Assets/EntityCache/Resources.meta
 /executable.zip
+/Packages/packages-lock.json
